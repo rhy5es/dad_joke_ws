@@ -2,11 +2,17 @@ from flask import Flask, render_template, jsonify
 import requests
 
 app = Flask(__name__)
-#dad_joke_api = requests.get("https://icanhazdadjoke.com/api", headers={"Accept" : "application/json"})
+DAD_JOKE_API_URL = "https://icanhazdadjoke.com/"
 
-@app.route('/')
-def index():
-    return render_template('index.html')
+@app.route('/', methods=['GET'])
+def get_joke():
+    response = requests.get(DAD_JOKE_API_URL, headers={"Accept": "application/json"})
+    try:
+        data = response.json()
+    except ValueError:
+        data = 'Error retrieving joke.'
 
-if __name__ == "__main__":
+    return render_template('index.html', data=data['joke'])
+
+if __name__ == '__main__':
     app.run(debug=True)
